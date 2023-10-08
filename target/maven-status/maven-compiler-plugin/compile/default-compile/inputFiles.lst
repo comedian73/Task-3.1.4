@@ -1,0 +1,11 @@
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\model\Role.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\configs\SuccessUserHandler.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\configs\MvcConfig.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\controller\AdminController.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\SpringBootSecurityDemoApplication.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\model\User.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\service\UserService.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\controller\UserController.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\repo\UserRepository.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\configs\WebSecurityConfig.java
+G:\JavaProject\Task-3.1.3\src\main\java\ru\kata\spring\boot_security\demo\repo\RoleRepository.java

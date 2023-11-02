@@ -10,9 +10,9 @@
 <div>
 <nav class="navbar navbar-dark bg-dark">
     <div  class="text-light">
-        <span th:text="${user.username}" class="font-weight-bold my-1 h5"></span>
+        <span id="nav-user" class="font-weight-bold my-1 h5"></span>
         <span> with roles: </span>
-        <span th:text="${user.getCleanRoles()}" class="my-1"></span>
+        <span id="nav-role" class="my-1"></span>
     </div>
     <div class="font-weight-bold">
         <a class="text-secondary nav-link my-2 my-sm-0" th:href="@{/logout}">Выйти</a>
@@ -33,8 +33,8 @@
             <div class="tab-content mt-3" id="nav-tabContent">
                 <div class="tab-pane fade show active" id="list-admin" role="tabpanel" aria-labelledby="list-admin-list">
                     <ul class="nav nav-tabs" role="tablist">
-                        <li class="nav-item">
-                            <a class="nav-link active" id="user-tab" data-toggle="tab" href="#user-list" role="tab" aria-controls="user-list" aria-selected="true">Список пользователей</a>
+                        <li class="nav-item" id="list-item">
+                            <a class="nav-link active" id="user-tab" onclick="tabClick() tableButton()" data-toggle="tab" href="#user-list" role="tab" aria-controls="user-list" aria-selected="true">Список пользователей</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="add-tab" data-toggle="tab" href="#addUser" role="tab" aria-controls="add" aria-selected="false">Новый пользователь</a>
@@ -42,7 +42,7 @@
                     </ul>
                     <div class="tab-content" id="myTabContent">
                         <div class="tab-pane fade show active" id="user-list" role="tabpanel" aria-labelledby="user-list-tab">
-                            <div th:action="@{/admin}">
+                            <div>
                                 <div class="border rounded-top pt-2 pb-1">
                                     <h5 class="ml-3">Список пользователей</h5>
                                 </div>
@@ -62,30 +62,13 @@
                                             <th >Изменить</th>
                                         </tr>
                                         </thead>
-                                        <tr th:each="lst : ${list}">
-                                            <td th:text="${lst.id}"></td>
-                                            <td th:text="${lst.username}"></td>
-                                            <td th:text="${lst.firstName}"></td>
-                                            <td th:text="${lst.lastName}"></td>
-                                            <td th:text="${lst.email}"></td>
-                                            <td th:text="${lst.password}"></td>
-                                            <td th:text="${lst.getCleanRoles()}" ></td>
-                                            <td th:border="0">
-                                                <form action="/admin/delete" method="post">
-                                                    <input type="hidden" name="del" th:value="${lst.id}">
-                                                    <button type="submit" class="btn btn-danger">Удалить</button>
-                                                </form>
-                                            </td>
-                                            <td th:border="0">
-                                                <button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-type="edit">Изменить</button>
-                                            </td>
-                                        </tr>
+                                        <tbody id="table-info-body"></tbody>
                                     </table>
 
                                     <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="edit" aria-hidden="true">
                                         <div class="modal-dialog modal-dialog-centered" role="document">
                                             <div class="modal-content">
-                                                <form th:action="@{/admin/edit}" th:object="${userAdd}" method="post">
+                                                <form  method="post" id="edit-form">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="editTitle">Изменение данных пользователя</h5>
                                                         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
@@ -95,34 +78,32 @@
                                                     <div class="modal-body">
                                                         <div class="form-group text-center">
                                                             <label for="edit-id" class="font-weight-bold h5">ID</label>
-                                                            <input type="text" class="form-control" id="edit-id" aria-describedby="id" th:field="*{id}" readonly>
+                                                            <input type="text" class="form-control" id="edit-id" aria-describedby="id"  readonly>
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-login" class="font-weight-bold h5">Логин</label>
-                                                            <input type="text" class="form-control" id="edit-login" aria-describedby="login" th:field="*{username}">
+                                                            <input type="text" class="form-control" id="edit-login" aria-describedby="login" >
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-first_name" class="font-weight-bold mx-auto h5">Имя</label>
-                                                            <input type="text" class="form-control" id="edit-first_name" aria-describedby="first_name" th:field="*{firstName}">
+                                                            <input type="text" class="form-control" id="edit-first_name" aria-describedby="first_name" >
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-last_name" class="font-weight-bold mx-auto h5">Фамилия</label>
-                                                            <input type="text" class="form-control" id="edit-last_name" aria-describedby="last_name" th:field="*{lastName}">
+                                                            <input type="text" class="form-control" id="edit-last_name" aria-describedby="last_name" >
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-email" class="font-weight-bold mx-auto h5">Email</label>
-                                                            <input type="email" class="form-control" id="edit-email" aria-describedby="email" th:field="*{email}">
+                                                            <input type="email" class="form-control" id="edit-email" aria-describedby="email" >
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-password" class="font-weight-bold mx-auto h5">Пароль</label>
-                                                            <input type="password" class="form-control input-hide" id="edit-password" aria-describedby="password" th:field="*{password}">
+                                                            <input type="password" class="form-control input-hide" id="edit-password" aria-describedby="password" >
                                                             <input type="hidden" id="edit-password-hidden">
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-role" class="font-weight-bold mx-auto h5">Роль</label>
-                                                            <select size="2" multiple class="form-control" id="edit-role" th:field="*{roles}">
-                                                                <option th:each="lst1 : ${listRole}" th:value="${lst1.id}" th:text="${lst1.name}"></option>
-                                                            </select>
+                                                            <select size="2" multiple class="form-control" id="edit-role"></select>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -143,38 +124,34 @@
                             </div>
                             <div class="bg-white border rounded-bottom">
                                 <div class="w-25 mx-auto py-3">
-                                <form th:action="@{/admin/addUser}" th:object="${userAdd}" method="post">
+                                <form action="/addNewUser/" id="addForm" method="post">
                                     <div class="form-group text-center">
                                         <label for="login" class="font-weight-bold h5">Логин</label>
-                                        <input type="text" class="form-control" id="login" aria-describedby="login" placeholder="Логин" th:field="*{username}">
+                                        <input type="text" class="form-control" name="username" id="login" aria-describedby="login" placeholder="Логин" >
                                     </div>
                                     <div class="form-group text-center">
                                         <label for="first_name" class="font-weight-bold mx-auto h5">Имя</label>
-                                        <input type="text" class="form-control" id="first_name" aria-describedby="first_name" placeholder="Имя" th:field="*{firstName}">
+                                        <input type="text" class="form-control" name="firstName" id="first_name" aria-describedby="first_name" placeholder="Имя" >
                                     </div>
                                     <div class="form-group text-center">
                                         <label for="last_name" class="font-weight-bold mx-auto h5">Фамилия</label>
-                                        <input type="text" class="form-control" id="last_name" aria-describedby="last_name" placeholder="Фамилия" th:field="*{lastName}">
+                                        <input type="text" class="form-control" name="lastName" id="last_name" aria-describedby="last_name" placeholder="Фамилия" >
                                     </div>
                                     <div class="form-group text-center">
                                         <label for="email" class="font-weight-bold mx-auto h5">Email</label>
-                                        <input type="email" class="form-control" id="email" aria-describedby="email" placeholder="Email" th:field="*{email}">
+                                        <input type="email" class="form-control" name="email" id="email" aria-describedby="email" placeholder="Email" >
                                     </div>
                                     <div class="form-group text-center">
                                         <label for="password" class="font-weight-bold mx-auto h5">Пароль</label>
-                                        <input type="password" class="form-control" id="password" aria-describedby="password" placeholder="Пароль" th:field="*{password}">
-                                        <th:block th:if="${#fields.hasErrors('password')}">
-                                            <div style="color : red" th:errors="*{password}">invalid</div>
-                                        </th:block>
+                                        <input type="password" class="form-control" name="password" id="password" aria-describedby="password" placeholder="Пароль" >
+
                                     </div>
                                     <div class="form-group text-center">
                                         <label for="role" class="font-weight-bold mx-auto h5">Роль</label>
-                                        <select size="2" multiple class="form-control" id="role" th:field="*{roles}">
-                                            <option th:each="lst : ${listRole}" th:value="${lst.id}" th:text="${lst.name}"></option>
-                                        </select>
+                                        <select size="2" multiple class="form-control" name="roles" id="role"></select>
                                     </div>
                                     <div class="form-group text-center">
-                                        <input type="submit" value="Сохранить" class="btn btn-success btn-lg">
+                                        <button type="submit" class="btn btn-success btn-lg" id="button-add">Сохранить</button>
                                     </div>
                                 </form>
                                 </div>
@@ -188,16 +165,74 @@
 </div>
 
 <script>
-    const table = document.getElementById('table-info');
-    const btn = document.getElementById('edit-save');
-    table.addEventListener('click', (e) => {
-        if (e.target.tagName !== 'BUTTON') return;
-        const tr = e.target.closest('tr');
-        if (e.target.dataset.type === 'edit') editRow(tr);
-        btn.addEventListener('click', () => {
-            if($('#edit-password').value == null) editPass(tr);
-        })
-    });
+    async function populate() {
+        const request = "http://localhost:8081/users-list";
+        let response = await fetch(request);
+        let listUsers = await response.text();
+
+
+        const request1 = "http://localhost:8081/role-list";
+        let response1 = await fetch(request1);
+        let listRole = await response1.text();
+        let role = $('#role');
+        let editRole = $('#edit-role');
+
+        fillTable(listUsers)
+        fillRole(listRole, role);
+        fillRole(listRole, editRole);
+    }
+
+
+    function fillTable(listUsers) {
+        const data = JSON.parse(listUsers);
+        let body = document.getElementById('table-info-body')
+        if(document.getElementById('table-info-body')){
+            body.innerHTML = '';
+        }
+
+        $('#table-info-body').append(`
+            ${data.map(n => `
+                <tr>
+                    <td>${n.id}</td>
+                    <td>${n.username}</td>
+                    <td>${n.firstName}</td>
+                    <td>${n.lastName}</td>
+                    <td>${n.email}</td>
+                    <td>${n.password}</td>
+                    <td>${Object.values(n.roles).map(n =>`${n.name}`)}</td>
+                    <td><button type="submit" class="btn btn-danger" data-type="delete">Удалить</button></td>
+                    <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-type="edit" >Изменить</button></td>
+                </tr>`).join('')}
+            `);
+
+    }
+
+    function fillRole(listRole, pole) {
+        const data = JSON.parse(listRole);
+        pole.append(`
+            ${data.map(n => `
+                <option value = "${n.id}">${n.name}</option>
+            `)}
+        `)
+    }
+
+    populate();
+</script>
+
+<script>
+    async function tableButton() {
+        const table = document.getElementById('table-info');
+        const btn = document.getElementById('edit-save');
+        table.addEventListener('click', (e) => {
+            if (e.target.tagName !== 'BUTTON') return;
+            const tr = e.target.closest('tr');
+            if (e.target.dataset.type === 'edit') editRow(tr);
+            if (e.target.dataset.type === 'delete') deleteRow(tr);
+            btn.addEventListener('click', () => {
+                if($('#edit-password').value == null) editPass(tr);
+            })
+        });
+    }
 
     function editRow(tr) {
         $("#edit-id").attr("value", tr.cells[0].innerText);
@@ -209,7 +244,52 @@
     }
     function editPass(tr) {
         $("#edit-password").attr("value", tr.cells[5].innerText);
-        }
+    }
+    function deleteRow(tr) {
+        let id = tr.cells[0].innerText;
+        let request = 'http://localhost:8081/user/delete/' + id;
+        fetch(request, {
+            method: 'DELETE',
+        });
+        tr.parentElement.removeChild(tr);
+    }
+</script>
+
+<script>
+     let addForm = document.getElementById('addForm')
+     addForm.addEventListener('submit', (e) => {
+         e.preventDefault();
+         let formData = new FormData(addForm)
+         fetch('/addNewUser', {
+             method: 'POST',
+             body: formData
+         });
+         $('form input[type=text], input[type=password], input[type=email]').val('')
+     })
+
+
+
+     let editForm = document.getElementById('edit-form')
+     editForm.addEventListener('submit', (e) => {
+         e.preventDefault();
+         let formData = new FormData(editForm)
+         fetch('/edit-user', {
+             method: 'POST',
+             body: formData
+         });
+         this.hidden
+     })
+
+     function tabClick() {
+
+         fetch('http://localhost:8081/users-list')
+             .then(response => response.text())
+             .then(data => fillTable(data));
+     }
+
+
+
+
 
 </script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

@@ -2,6 +2,8 @@ package ru.kata.spring.boot_security.demo.controller;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import ru.kata.spring.boot_security.demo.model.Role;
@@ -18,8 +20,13 @@ public class RestController {
 
     @GetMapping("/users-list")
     public List<User> listUser() {
-
         return userService.getAllUsers();
+    }
+
+    @GetMapping("/authentication-user")
+    public User authUser() {
+       Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return (User) userService.loadUserByUsername(auth.getName());
     }
 
     @GetMapping("/role-list")

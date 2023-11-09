@@ -9,7 +9,7 @@
 <body>
 <div>
 <nav class="navbar navbar-dark bg-dark">
-    <div  class="text-light">
+    <div  class="text-light" id="nav-bar-user">
         <span id="nav-user" class="font-weight-bold my-1 h5"></span>
         <span> with roles: </span>
         <span id="nav-role" class="my-1"></span>
@@ -34,7 +34,7 @@
                 <div class="tab-pane fade show active" id="list-admin" role="tabpanel" aria-labelledby="list-admin-list">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item" id="list-item">
-                            <a class="nav-link active" id="user-tab" onclick="tabClick() tableButton()" data-toggle="tab" href="#user-list" role="tab" aria-controls="user-list" aria-selected="true">Список пользователей</a>
+                            <a class="nav-link active" id="user-tab" onclick="populate()" data-toggle="tab" href="#user-list" role="tab" aria-controls="user-list" aria-selected="true">Список пользователей</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="add-tab" data-toggle="tab" href="#addUser" role="tab" aria-controls="add" aria-selected="false">Новый пользователь</a>
@@ -166,6 +166,8 @@
 
 <script>
     async function populate() {
+
+
         const request = "http://localhost:8081/users-list";
         let response = await fetch(request);
         let listUsers = await response.text();
@@ -177,11 +179,33 @@
         let role = $('#role');
         let editRole = $('#edit-role');
 
+        const req = "http://localhost:8081/authentication-user"
+        let res = await fetch(req);
+        let user = await res.text();
+
         fillTable(listUsers)
         fillRole(listRole, role);
         fillRole(listRole, editRole);
+        navUser(user);
     }
 
+    function navUser(user) {
+        const data = JSON.parse(user);
+        let uName = document.getElementById('nav-user')
+        let uRole = document.getElementById('nav-role');
+        let x = ''
+        uName.innerText = data['username']
+        for (let i in data['roles']) {
+            x += data['roles'][i]['name']
+        }
+        uRole.innerText = x.replace(/ROLE_/g, ' ');
+
+        // $('#nan-bar-user').append(`
+        //     ${data.map(n => `
+        //         <span>${n.username}</span>
+        //         <span> with roles:</span>
+        //         <span>${Object.values(n.roles).map(n => `${n.name.replace('ROLE_', ' ')}`)}</span>`)}`)
+    }
 
     function fillTable(listUsers) {
         const data = JSON.parse(listUsers);
@@ -199,17 +223,18 @@
                     <td>${n.lastName}</td>
                     <td>${n.email}</td>
                     <td>${n.password}</td>
-                    <td>${Object.values(n.roles).map(n =>`${n.name}`)}</td>
+                    <td>${Object.values(n.roles).map(n =>`${n.name.replace(/ROLE_/g,' ')}`)}</td>
                     <td><button type="submit" class="btn btn-danger" data-type="delete">Удалить</button></td>
-                    <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-type="edit" >Изменить</button></td>
+                    <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-type="edit" onclick="tableButton()">Изменить</button></td>
                 </tr>`).join('')}
             `);
 
+        tableButton();
     }
 
-    function fillRole(listRole, pole) {
+    function fillRole(listRole, role) {
         const data = JSON.parse(listRole);
-        pole.append(`
+        role.append(`
             ${data.map(n => `
                 <option value = "${n.id}">${n.name}</option>
             `)}
@@ -220,8 +245,8 @@
 </script>
 
 <script>
-    async function tableButton() {
-        const table = document.getElementById('table-info');
+     function tableButton() {
+        const table = document.getElementById('table-info-body');
         const btn = document.getElementById('edit-save');
         table.addEventListener('click', (e) => {
             if (e.target.tagName !== 'BUTTON') return;
@@ -229,7 +254,7 @@
             if (e.target.dataset.type === 'edit') editRow(tr);
             if (e.target.dataset.type === 'delete') deleteRow(tr);
             btn.addEventListener('click', () => {
-                if($('#edit-password').value == null) editPass(tr);
+                if ($('#edit-password').value == null) editPass(tr);
             })
         });
     }
@@ -279,17 +304,6 @@
          });
          this.hidden
      })
-
-     function tabClick() {
-
-         fetch('http://localhost:8081/users-list')
-             .then(response => response.text())
-             .then(data => fillTable(data));
-     }
-
-
-
-
 
 </script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

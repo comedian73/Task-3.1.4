@@ -44,7 +44,7 @@ public class RestController {
         userService.saveUser(user);
     }
 
-    @PostMapping(value = "/edit-user",consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PostMapping(value = "/editUser")
     public void editUser(@ModelAttribute User user) {
         userService.updateUser(user);
     }

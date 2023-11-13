@@ -22,7 +22,7 @@
     <div class="row">
         <div class="col-1 col-sm-2 min-vh-100 p-0">
             <div class="list-group mt-3 m-0" id="list-tab" role="tablist">
-                <div th:if="${user.getCleanRoles().contains('ADMIN')}">
+                <div id="admin-link">
                 <a class="list-group-item list-group-item-action" id="list-admin-list" data-toggle="html" href="/admin" role="tab" aria-controls="admin">Admin</a>
                 </div>
                 <a class="list-group-item list-group-item-action active" id="list-user-list" data-toggle="html" href="/user" role="tab" aria-controls="user">User</a>
@@ -67,9 +67,11 @@
         let res = await fetch(req);
         let user = await res.text();
         navUser(user);
+        hiddenAdmin(user);
         fillTable(user);
     }
     start();
+
     function navUser(user) {
         const data = JSON.parse(user);
         let uName = document.getElementById('nav-user')
@@ -81,24 +83,33 @@
         }
         uRole.innerText = x.replace(/ROLE_/g, ' ');
     }
+
     function fillTable(user) {
         const data = JSON.parse(user);
-
         $('#table-info-body').append(`
+            <tr>
+                <td>${data.id}</td>
+                <td>${data.username}</td>
+                <td>${data.firstName}</td>
+                <td>${data.lastName}</td>
+                <td>${data.email}</td>
+                <td>${Object.values(data.roles).map(n => `${n.name.replace(/ROLE_/g, ' ')}`)}</td>
+            </tr>`).join('');
+    }
 
-                <tr>
-                    <td>${data.id}</td>
-                    <td>${data.username}</td>
-                    <td>${data.firstName}</td>
-                    <td>${data.lastName}</td>
-                    <td>${data.email}</td>
-                    <td>${data.password}</td>
-                    <td>${Object.values(data.roles).map(n => `${n.name.replace(/ROLE_/g, ' ')}`)}</td>
-                </tr>`).join('');
-
+    function hiddenAdmin(user) {
+        let data = JSON.parse(user);
+        let div = document.getElementById('admin-link')
+        let roles = Object.values(data.roles);
+        let value = ''
+        for (let key in roles) {
+            value += roles[key]['name'];
+        }
+        if (!value.includes('ROLE_ADMIN')) {
+            div.parentNode.removeChild(div)
+        }
     }
 </script>
-
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
 <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>

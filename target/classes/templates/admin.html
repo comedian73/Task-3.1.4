@@ -7,7 +7,7 @@
           integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
 </head>
 <body>
-<div>
+<div class="start">
 <nav class="navbar navbar-dark bg-dark">
     <div  class="text-light" id="nav-bar-user">
         <span id="nav-user" class="font-weight-bold my-1 h5"></span>
@@ -34,7 +34,7 @@
                 <div class="tab-pane fade show active" id="list-admin" role="tabpanel" aria-labelledby="list-admin-list">
                     <ul class="nav nav-tabs" role="tablist">
                         <li class="nav-item" id="list-item">
-                            <a class="nav-link active" id="user-tab" onclick="populate()" data-toggle="tab" href="#user-list" role="tab" aria-controls="user-list" aria-selected="true">Список пользователей</a>
+                            <a class="nav-link active" id="user-tab" data-toggle="tab" href="#user-list" role="tab" aria-controls="user-list" aria-selected="true">Список пользователей</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="add-tab" data-toggle="tab" href="#addUser" role="tab" aria-controls="add" aria-selected="false">Новый пользователь</a>
@@ -71,39 +71,38 @@
                                                 <form  method="post" id="edit-form">
                                                     <div class="modal-header">
                                                         <h5 class="modal-title" id="editTitle">Изменение данных пользователя</h5>
-                                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                                        <button type="button" class="close" id="close-edit" data-dismiss="modal" aria-label="Close">
                                                             <span aria-hidden="true">&times;</span>
                                                         </button>
                                                     </div>
                                                     <div class="modal-body">
                                                         <div class="form-group text-center">
                                                             <label for="edit-id" class="font-weight-bold h5">ID</label>
-                                                            <input type="text" class="form-control" id="edit-id" aria-describedby="id"  readonly>
+                                                            <input type="text" class="form-control" name="id" id="edit-id" aria-describedby="id"  readonly>
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-login" class="font-weight-bold h5">Логин</label>
-                                                            <input type="text" class="form-control" id="edit-login" aria-describedby="login" >
+                                                            <input type="text" class="form-control" name="username" id="edit-login" aria-describedby="username">
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-first_name" class="font-weight-bold mx-auto h5">Имя</label>
-                                                            <input type="text" class="form-control" id="edit-first_name" aria-describedby="first_name" >
+                                                            <input type="text" class="form-control" name="firstName" id="edit-first_name" aria-describedby="first_name">
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-last_name" class="font-weight-bold mx-auto h5">Фамилия</label>
-                                                            <input type="text" class="form-control" id="edit-last_name" aria-describedby="last_name" >
+                                                            <input type="text" class="form-control" name="lastName" id="edit-last_name" aria-describedby="last_name">
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-email" class="font-weight-bold mx-auto h5">Email</label>
-                                                            <input type="email" class="form-control" id="edit-email" aria-describedby="email" >
+                                                            <input type="email" class="form-control" name="email" id="edit-email" aria-describedby="email">
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-password" class="font-weight-bold mx-auto h5">Пароль</label>
-                                                            <input type="password" class="form-control input-hide" id="edit-password" aria-describedby="password" >
-                                                            <input type="hidden" id="edit-password-hidden">
+                                                            <input type="password" class="form-control input-hide" name="password" id="edit-password" aria-describedby="password">
                                                         </div>
                                                         <div class="form-group text-center">
                                                             <label for="edit-role" class="font-weight-bold mx-auto h5">Роль</label>
-                                                            <select size="2" multiple class="form-control" id="edit-role"></select>
+                                                            <select size="2" multiple class="form-control" name="roles" id="edit-role"></select>
                                                         </div>
                                                     </div>
                                                     <div class="modal-footer">
@@ -165,13 +164,11 @@
 </div>
 
 <script>
+
     async function populate() {
-
-
         const request = "http://localhost:8081/users-list";
         let response = await fetch(request);
         let listUsers = await response.text();
-
 
         const request1 = "http://localhost:8081/role-list";
         let response1 = await fetch(request1);
@@ -183,15 +180,17 @@
         let res = await fetch(req);
         let user = await res.text();
 
-        fillTable(listUsers)
+        navUser(user);
+        fillTable(listUsers);
+        tableButton();
         fillRole(listRole, role);
         fillRole(listRole, editRole);
-        navUser(user);
     }
+    populate();
 
     function navUser(user) {
         const data = JSON.parse(user);
-        let uName = document.getElementById('nav-user')
+        let uName = document.getElementById('nav-user');
         let uRole = document.getElementById('nav-role');
         let x = ''
         uName.innerText = data['username']
@@ -199,16 +198,10 @@
             x += data['roles'][i]['name']
         }
         uRole.innerText = x.replace(/ROLE_/g, ' ');
-
-        // $('#nan-bar-user').append(`
-        //     ${data.map(n => `
-        //         <span>${n.username}</span>
-        //         <span> with roles:</span>
-        //         <span>${Object.values(n.roles).map(n => `${n.name.replace('ROLE_', ' ')}`)}</span>`)}`)
     }
 
     function fillTable(listUsers) {
-        const data = JSON.parse(listUsers);
+        const data = JSON.parse(listUsers).sort(function (a, b) {return a.id - b.id});
         let body = document.getElementById('table-info-body')
         if(document.getElementById('table-info-body')){
             body.innerHTML = '';
@@ -225,11 +218,9 @@
                     <td>${n.password}</td>
                     <td>${Object.values(n.roles).map(n =>`${n.name.replace(/ROLE_/g,' ')}`)}</td>
                     <td><button type="submit" class="btn btn-danger" data-type="delete">Удалить</button></td>
-                    <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-type="edit" onclick="tableButton()">Изменить</button></td>
+                    <td><button type="button" class="btn btn-info" data-toggle="modal" data-target="#edit" data-type="edit">Изменить</button></td>
                 </tr>`).join('')}
             `);
-
-        tableButton();
     }
 
     function fillRole(listRole, role) {
@@ -241,11 +232,7 @@
         `)
     }
 
-    populate();
-</script>
-
-<script>
-     function tableButton() {
+    function tableButton() {
         const table = document.getElementById('table-info-body');
         const btn = document.getElementById('edit-save');
         table.addEventListener('click', (e) => {
@@ -259,13 +246,13 @@
         });
     }
 
+
     function editRow(tr) {
         $("#edit-id").attr("value", tr.cells[0].innerText);
         $("#edit-login").attr("value", tr.cells[1].innerText);
         $("#edit-first_name").attr("value", tr.cells[2].innerText);
         $("#edit-last_name").attr("value", tr.cells[3].innerText);
         $("#edit-email").attr("value", tr.cells[4].innerText);
-
     }
     function editPass(tr) {
         $("#edit-password").attr("value", tr.cells[5].innerText);
@@ -278,32 +265,33 @@
         });
         tr.parentElement.removeChild(tr);
     }
-</script>
 
-<script>
-     let addForm = document.getElementById('addForm')
-     addForm.addEventListener('submit', (e) => {
-         e.preventDefault();
-         let formData = new FormData(addForm)
-         fetch('/addNewUser', {
-             method: 'POST',
-             body: formData
-         });
-         $('form input[type=text], input[type=password], input[type=email]').val('')
-     })
+    let addForm = document.getElementById('addForm')
+    addForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let formData = new FormData(addForm)
+        fetch('/addNewUser', {
+            method: 'POST',
+            body: formData
+        });
+        $('form input[type=text], input[type=password], input[type=email]').val('')
+        document.getElementById('user-tab').click()
+        setTimeout(populate, 200)
 
+    })
 
-
-     let editForm = document.getElementById('edit-form')
-     editForm.addEventListener('submit', (e) => {
-         e.preventDefault();
-         let formData = new FormData(editForm)
-         fetch('/edit-user', {
-             method: 'POST',
-             body: formData
-         });
-         this.hidden
-     })
+    let editForm = document.getElementById('edit-form')
+    editForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        let formData = new FormData(editForm)
+        fetch('/editUser', {
+            method: 'POST',
+            body: formData
+        });
+        $('form input[type=password]').val('')
+        document.getElementById('close-edit').click()
+        setTimeout(populate, 100)
+    })
 
 </script>
 <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>

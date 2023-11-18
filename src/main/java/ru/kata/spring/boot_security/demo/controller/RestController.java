@@ -44,7 +44,7 @@ public class RestController {
         userService.saveUser(user);
     }
 
-    @PostMapping(value = "/editUser")
+    @PutMapping(value = "/editUser")
     public void editUser(@ModelAttribute User user) {
         userService.updateUser(user);
     }

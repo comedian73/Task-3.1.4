@@ -285,7 +285,7 @@
         e.preventDefault();
         let formData = new FormData(editForm)
         fetch('/editUser', {
-            method: 'POST',
+            method: 'PUT',
             body: formData
         });
         $('form input[type=password]').val('')
